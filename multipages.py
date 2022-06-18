@@ -2,8 +2,13 @@ from bs4 import BeautifulSoup as bs
 import requests
 import pandas as pd 
 from csv import writer
+from google.colab import files
 
 URL = 'https://www.eventbrite.com/d/india/business--events--this-month/?page='
+
+eventNames = []
+eventDates = []
+eventLocations = []
 
 for page in range (1,9):
 
@@ -18,10 +23,11 @@ for page in range (1,9):
         Event_name = list.find('h3',class_ ="eds-event-card-content__title").text.replace('\n','')
         Date = list.find('div',class_="eds-event-card-content__sub-title").text.replace('\n','')
         Event_Location_Address = list.find('div',class_="card-text--truncated__one").text.replace('\n','')
-        info = {Event_name, Date, Event_Location_Address} 
-        print(info)  
+        eventNames.append(Event_name)
+        eventDates.append(Date)
+        eventLocations.append(Event_Location_Address)
 
-
-
-
-    
+info = {'Event Name': eventNames, 'Date': eventDates, 'Event Location Address': eventLocations} 
+df = pd.DataFrame(info)
+df.to_csv('event.csv', header=True, index=False)
+files.download('event.csv')
